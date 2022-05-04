@@ -28,7 +28,6 @@ CHARACTERS(wchar_t);
 CHARACTERS(char16_t);
 CHARACTERS(char32_t);
 
-// Loop through tuple
 template<size_t I, typename Tuple, typename Output>
 void foreach(Tuple& in, Output& out) {
     if constexpr (I > 0) { foreach<I - 1>(in, out); } // Foreach
@@ -47,8 +46,9 @@ template<class ...Args>
 void TupleCodeChallenge(tuple<Args...> input) {
     using Output = tuple<double, string, int>; // Output is: double, string, int
     Output out(0, "", 0);   // Create output tuple
-    const int size = tuple_size<tuple<Args...>>::value; // Get tuple size
-    if constexpr (size > 0) foreach<size-1>(input, out); // Loop through input and get output
+    const int size = tuple_size<tuple<Args...>>::value; // Get input size
+    // Ensure input is not empty
+    if constexpr (size > 0) { foreach<size - 1>(input, out); } // Loop input and get output
     cout << get<0>(out) << "," << get<1>(out) << ", " << get<2>(out) << endl; // Display output
 }
 
