@@ -1,18 +1,22 @@
 // Christian Chernock Solution
+// Uses C++ 17 or higher
 
 #include <tuple>
 #include <iostream>
 using namespace std;
 
-using output = tuple<double, string, int>; // Output is: double, string, int
-
-template <typename T> constexpr char getType() { 
+// Get type: 
+//   i = numeric
+//   s = string or character
+//   x = ignore
+template <typename T> constexpr char getType() {
     if (is_convertible_v<T, int>) { return 'i'; } // Check if numeric
-    else if (is_convertible_v<T, string>)  { return 's'; } // check if castable
+    else if (is_convertible_v<T, string>) { return 's'; } // check if castable
     else { return 'x'; }
 }
 
-template <> constexpr char getType<bool>() { return 'x'; } // bool
+// Boolean
+template <> constexpr char getType<bool>() { return 'x'; } 
 
 // Character types
 #define CHARACTERS(C) template <> constexpr char getType<C>() { return 's'; }
@@ -24,20 +28,16 @@ CHARACTERS(wchar_t);
 CHARACTERS(char16_t);
 CHARACTERS(char32_t);
 
-template<size_t I, typename Tuple>
-void foreach(Tuple& in, output& out) {
-	
-	// Foreach
-    if constexpr (I > 0) { foreach<I-1>(in, out); } 
-	
-	// Get type
-    const char isType = getType<tuple_element_t<I, Tuple>>(); 
-	
+// Loop through tuple
+template<size_t I, typename Tuple, typename Output>
+void foreach(Tuple& in, Output& out) {
+    if constexpr (I > 0) { foreach<I - 1>(in, out); } // Foreach
+    const char constexpr isType = getType<tuple_element_t<I, Tuple>>(); // Get type
     if constexpr (isType == 'i') { // Add numeric entries together
-        get<0>(out) += get<I>(in); 
+        get<0>(out) += get<I>(in);
     } else if constexpr (isType == 's') { // Concatenate strings and characters
         get<1>(out) += " ";
-        get<1>(out) += get<I>(in); 
+        get<1>(out) += get<I>(in);
     } else {
         get<2>(out)++;  // Increase ignored counter
     }
@@ -45,11 +45,16 @@ void foreach(Tuple& in, output& out) {
 
 template<class ...Args>
 void TupleCodeChallenge(tuple<Args...> input) {
-    output out(0, "", 0);   // Create output tuple
-    foreach<tuple_size<tuple<Args...>>::value-1>(input, out); // Loop through input tuple
-    cout << get<0>(out) << "," << get<1>(out) << ", " << get<2>(out); // Display output
+    using Output = tuple<double, string, int>; // Output is: double, string, int
+    Output out(0, "", 0);   // Create output tuple
+    const int size = tuple_size<tuple<Args...>>::value; // Get tuple size
+    if constexpr (size > 0) foreach<size-1>(input, out); // Loop through input and get output
+    cout << get<0>(out) << "," << get<1>(out) << ", " << get<2>(out) << endl; // Display output
 }
 
 int main() {
-    TupleCodeChallenge(make_tuple(10, true, "Modern", 2.3f, "C++"));
+    using Tuple = std::tuple<int32_t, bool, std::string, float, const char*>;
+    Tuple t{ 10, true, "Modern", 2.3f, "C++"};
+    TupleCodeChallenge(t);
+    TupleCodeChallenge(make_tuple(1.1f, 2, "Hello", "World", '!', true));
 }
