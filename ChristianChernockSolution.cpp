@@ -42,7 +42,7 @@ void foreach(Tuple& in, Output& out) {
     }
 }
 
-template<class ...Args>
+template<typename ...Args>
 void TupleCodeChallenge(tuple<Args...> input) {
     using Output = tuple<double, string, int>; // Output is: double, string, int
     Output out(0, "", 0);   // Create output tuple
