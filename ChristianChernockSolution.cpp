@@ -46,14 +46,14 @@ template<class ...Args>
 void TupleCodeChallenge(tuple<Args...> input) {
     using Output = tuple<double, string, int>; // Output is: double, string, int
     Output out(0, "", 0);   // Create output tuple
-    const int size = tuple_size<tuple<Args...>>::value; // Get input size
+    const size_t size = tuple_size<tuple<Args...>>::value; // Get input size
     // Ensure input is not empty
     if constexpr (size > 0) { foreach<size - 1>(input, out); } // Loop input and get output
     cout << get<0>(out) << "," << get<1>(out) << ", " << get<2>(out) << endl; // Display output
 }
 
 int main() {
-    using Tuple = std::tuple<int32_t, bool, std::string, float, const char*>;
+    using Tuple = tuple<int32_t, bool, string, float, const char*>;
     Tuple t{ 10, true, "Modern", 2.3f, "C++"};
     TupleCodeChallenge(t);
     TupleCodeChallenge(make_tuple(1.1f, 2, "Hello", "World", '!', true));
